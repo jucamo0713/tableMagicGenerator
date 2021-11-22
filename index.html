@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TablasMagicas</title>
+</head>
+<style>
+    .box {
+        border: 1px black solid;
+        display: inline-block;
+        margin: 0px -1px -1px 0;
+
+        text-align: center;
+        font-size: medium;
+        width: 1cm;
+        border-radius: 0;
+    }
+
+    .tabla {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .tabla td,
+    th {
+        border: 1px black solid;
+        text-align: center;
+        padding: 2px;
+    }
+</style>
+<script>
+    let anterior = 0;
+    let anchoVP = document.documentElement.clientWidth - 16;
+    validar = (value) => {
+        if (value < 0) {
+            document.getElementById('Max').value = 0;
+        }
+    }
+    generar = (value) => {
+        document.getElementById("ok").Disabled = 1;
+        console.time("Metodo1");
+        if (anterior != value || anchoVP != (document.documentElement.clientWidth - 16)) {
+            anchoVP = (document.documentElement.clientWidth - 16);
+            anterior = value;
+            let largo = ("" + value).length;
+            let columnwidthaprx = (largo * 9 + 5);
+            let cantidadColumnas = Math.floor(anchoVP / columnwidthaprx)
+            let exponente = 0;
+            for (exponente; value > Math.pow(2, exponente + 1) - 1; exponente++) { }
+            let tablas = "";
+            for (let i = 0; i <= exponente; i++) {
+                tablas += `<table class='tabla' id=${"Tabla" + i}>`
+                tablas += "</table><br>"
+            }
+            document.getElementById("conten").innerHTML = tablas;
+
+            for (let i = 0; i <= exponente; i++) {
+                let tabla = `<tr><th colspan=${cantidadColumnas}>Tabla ${i}</th></tr>`;
+                for (let j = Math.pow(2, i); j <= value; j) {
+                    tabla += `<tr>`;
+                    for (let k = 0; k < cantidadColumnas && j <= value; k++) {
+                        if (Math.pow(2, i) == (j & Math.pow(2, i))) {
+                            tabla += `<td>${j}`;
+                            tabla += `</td>`;
+                        }
+                        else {
+                            k--;
+                        }
+                        j++;
+                    }
+                    tabla += `</tr>`;
+                }
+                document.getElementById("Tabla" + i).innerHTML = tabla;
+            }
+        }
+        console.timeEnd("Metodo1");
+        document.getElementById("ok").Disabled = 0;
+    }
+    generar2 = (value) => {
+        document.getElementById("ok2").Disabled = 1;
+        console.time("Metodo2");
+        if (anterior != value || anchoVP != (document.documentElement.clientWidth - 16)) {
+            anchoVP = (document.documentElement.clientWidth - 16);
+            anterior = value;
+            let largo = ("" + value).length;
+            let columnwidthaprx = (largo * 9 + 5);
+            let cantidadColumnas = Math.floor(anchoVP / columnwidthaprx)
+            let exponente = 0;
+            let l = 0
+            for (exponente; value > Math.pow(2, exponente + 1) - 1; exponente++) { }
+            let tablas = "";
+            for (let i = 0; i <= exponente; i++) {
+                tablas += `<table class='tabla'id=${"Tabla" + i}>`
+                tablas += "</table><br>"
+            }
+            document.getElementById("conten").innerHTML = tablas;
+            for (let i = 0; i <= exponente; i++) {
+                let tabla = `<tr><th colspan=${cantidadColumnas}>Tabla ${i}</th></tr>`;
+                for (let j = Math.pow(2, i); j <= value; j) {
+                    tabla += `<tr>`;
+                    for (let k = 0; k < cantidadColumnas && j <= value; k) {
+                        for (l; l < Math.pow(2, i); l++) {
+                            if (k < cantidadColumnas  && j <= value) {
+                                tabla += `<td>${j}`;
+                                tabla += `</td>`;
+                                j++;
+                                k++;
+                            } else {
+                                break
+                            }
+                        }
+                        if (l >= Math.pow(2, i)) {
+                            j += Math.pow(2, i);
+                            l = 0;
+                        }
+                    }
+                    tabla += `</tr>`;
+                }
+                document.getElementById("Tabla" + i).innerHTML = tabla;
+            }
+        }
+        console.timeEnd("Metodo2");
+        document.getElementById("ok2").Disabled = 0;
+    }
+</script>
+
+<body onresize="generar2(document.getElementById('Max').value)">
+    <p>Inserte hasta que numero desea que se generen las tablas <input type="number" placeholder="Numero Maximo" min=0
+            id="Max" value=0 onchange="validar(value)" oninput="validar(value)"> <input id="ok" type="button"
+            value="Generar por validacion bit to bit" onclick="generar(document.getElementById('Max').value)"><input
+            id="ok2" type="button" value="Generar por patron" onclick="generar2(document.getElementById('Max').value)">
+    </p>
+    <div id="conten"></div>
+</body>
+
+</html>
